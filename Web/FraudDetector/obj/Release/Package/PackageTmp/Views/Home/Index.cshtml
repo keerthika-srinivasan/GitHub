@@ -1,0 +1,118 @@
+﻿@*@{
+        ViewBag.Title = "Home Page";
+    }
+
+    <div class="jumbotron">
+        <h1>ASP.NET</h1>
+        <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
+        <p><a href="https://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <h2>Getting started</h2>
+            <p>
+                ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
+                enables a clean separation of concerns and gives you full control over markup
+                for enjoyable, agile development.
+            </p>
+            <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
+        </div>
+        <div class="col-md-4">
+            <h2>Get more libraries</h2>
+            <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
+            <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
+        </div>
+        <div class="col-md-4">
+            <h2>Web Hosting</h2>
+            <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
+            <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
+        </div>
+    </div>*@
+<head>
+    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script>
+</head>
+<body>
+
+    <div class="table-responsive" id="FraudDet">
+    </div>
+    <div class="modal fade" id="myModal" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Modal Header</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Some text in the modal.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default yes" data-dismiss="modal">Yes</button>
+                    <button type="button" class="btn btn-default no" data-dismiss="modal">No</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+</body>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $.ajax({
+            type: "GET",
+            url: "/Home/response",
+           
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+
+                var items = '<table class="table"><tr><th>CarrNUmber</th><th>TransactionId</th><th>Validate</th></tr>';
+                $.each(response, function (i, response) {
+                    items += "<tr><td>" + response.CardNumber + "</td><td>" + response.TransactionId + "</td><td><button type='button' class='btn btn-warning' id= 'Delete" + response.TransactionId +"'  onclick=\"ValidateRecord('"+response.TransactionId+"','"+ response.CardNumber+"')\">Warning</button></td></tr>";
+                      });
+                items += "</table>";
+                $('#FraudDet').html(items);
+               
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    });
+
+    $(".yes").click(function () {
+        $.ajax({
+            type: "POST",
+            url: "/Home/ProcessTransactionRecord",
+            data: { 'IsFraud':'y'},
+            contentType: "application/text; charset=utf-8",
+            
+            success: function (response) {
+              
+
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    })
+
+    function ValidateRecord(TransactionId, CardNumber) {
+        var id = "#Delete" + TransactionId;
+        alert(id);
+        $("#myModal").modal();
+        //var FindId = $(document).getElementById('Delete"'+TransactionId')
+       // $(id).
+        //alert(TransactionId + '' + CardNumber);
+    }
+</script>
