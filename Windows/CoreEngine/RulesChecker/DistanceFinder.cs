@@ -93,7 +93,7 @@ namespace CoreEngine.RulesChecker
                 return 1;
             }
 
-            return -1;
+            return 1;
         }
 
     }
