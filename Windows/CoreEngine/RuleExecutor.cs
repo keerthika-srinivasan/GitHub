@@ -1,10 +1,7 @@
-﻿using common.Model.RuleEngine;
+using common.Model.RuleEngine;
 using CoreEngine.RulesChecker;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CoreEngine
 {
@@ -14,18 +11,27 @@ namespace CoreEngine
         {
             Repository.SelectOperation selectRepo = new Repository.SelectOperation();
             var transDetails = selectRepo.LoadTransaction(TransactionId);
-            
-            //Distance Scoring
-            DistanceFinder disFinder = new DistanceFinder(transDetails);
-            var res = disFinder.Validate();
 
-            IPAddressChecker ipValidator = new IPAddressChecker(transDetails);
-            var ipRes = ipValidator.Validate();
-            
-            HistoryChecker his = new HistoryChecker(transDetails);
-            var hisRes = his.Validate();
+            var totScore = 0M;
 
-            var totScore= res + ipRes + hisRes;
+            #region Execute Rule Engine On Request
+            Type type1 = typeof(iRuleChecker);
+            var lookupTypes = AppDomain.CurrentDomain.GetAssemblies()
+                .SelectMany(s => s.GetTypes())
+                .Where(p => type1.IsAssignableFrom(p));
+            var currentAssembly = System.Reflection.Assembly.GetExecutingAssembly();
+
+
+            foreach (var item in lookupTypes)
+            {
+                Type[] consPara = new Type[] { typeof(TransactionResponse) };
+                var emptyConstructor = item.GetConstructor(consPara);
+                var newStringCustomer = (iRuleChecker)emptyConstructor.Invoke(new object[] { transDetails });
+
+                totScore += newStringCustomer.Validate();
+            }
+
+            #endregion
 
             Repository.InsertOperation insRepo = new Repository.InsertOperation();
             insRepo.SetFraudValidation(TransactionId, totScore, (totScore > 1.1M));
