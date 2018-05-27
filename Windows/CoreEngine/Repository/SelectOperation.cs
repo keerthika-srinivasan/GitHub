@@ -1,4 +1,4 @@
-﻿using common.Model.RuleEngine;
+using common.Model.RuleEngine;
 using Common.Model;
 using System;
 using System.Collections.Generic;
@@ -39,7 +39,7 @@ namespace CoreEngine.Repository
 
         public TransactionResponse LoadTransaction(string transactionId)
         {
-            string query = "select top 1 *  FROM [Transactions] where TransactionId={0} and FraudScore=-1.0 order by TransactionDT asc";
+            string query = "select top 1 *  FROM [Transactions] where TransactionId={0} order by id desc";
             TransactionResponse response = GetTransaction(string.Format(query, transactionId));
 
             var oldTransId = LoadPreviousImmediateTransasction(transactionId);
@@ -58,16 +58,16 @@ namespace CoreEngine.Repository
         public string LoadPreviousImmediateTransasction(string TransactionId)
         {
 
-            var sqlQuery = string.Format("select transactionid from Transactions where CardNo in(SELECT CardNo FROM[dbo].[Transactions] where TransactionId = {0}) and TransactionId!={0}", TransactionId);
-            SqlDataAdapter daAuthors = new SqlDataAdapter(sqlQuery, con);
+            var sqlQuery = string.Format("select transactionid from Transactions where CardNo in(SELECT CardNo FROM[dbo].[Transactions] where TransactionId = {0}) and TransactionId!={0} order by id desc", TransactionId);
+            SqlDataAdapter datrans = new SqlDataAdapter(sqlQuery, con);
             DataSet dsPubs = new DataSet("transaction");
-            daAuthors.FillSchema(dsPubs, SchemaType.Source, "Authors");
-            daAuthors.Fill(dsPubs, "Authors");
+            datrans.FillSchema(dsPubs, SchemaType.Source, "trans");
+            datrans.Fill(dsPubs, "trans");
 
-            DataTable tblAuthors;
-            tblAuthors = dsPubs.Tables["Authors"];
+            DataTable tbltrans;
+            tbltrans = dsPubs.Tables["trans"];
 
-            foreach (DataRow drCurrent in tblAuthors.Rows)
+            foreach (DataRow drCurrent in tbltrans.Rows)
             {
                 return drCurrent["transactionid"].ToString();
             }
@@ -78,15 +78,15 @@ namespace CoreEngine.Repository
         private TransactionResponse GetTransaction(string sqlQuery)
         {
             TransactionResponse response = new TransactionResponse();
-            SqlDataAdapter daAuthors = new SqlDataAdapter(sqlQuery, con);
+            SqlDataAdapter datrans = new SqlDataAdapter(sqlQuery, con);
             DataSet dsPubs = new DataSet("transaction");
-            daAuthors.FillSchema(dsPubs, SchemaType.Source, "Authors");
-            daAuthors.Fill(dsPubs, "Authors");
+            datrans.FillSchema(dsPubs, SchemaType.Source, "trans");
+            datrans.Fill(dsPubs, "trans");
 
-            DataTable tblAuthors;
-            tblAuthors = dsPubs.Tables["Authors"];
+            DataTable tbltrans;
+            tbltrans = dsPubs.Tables["trans"];
 
-            foreach (DataRow drCurrent in tblAuthors.Rows)
+            foreach (DataRow drCurrent in tbltrans.Rows)
             {
                 response = ReadRow(drCurrent);
                 break;
