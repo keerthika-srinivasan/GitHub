@@ -1,4 +1,4 @@
-﻿using common.Model;
+using common.Model;
 using common.Model.RuleEngine;
 using CoreEngine;
 using CoreEngine.Repository;
@@ -32,11 +32,12 @@ namespace FraudDetector.Win
             var lines = File.ReadLines(file);
             List<TransactionRequest> input = new List<TransactionRequest>();
             //To Avoid Header
+            var _transIdToAppend = DateTime.Now.ToString("ddMMyyHHMMss");
             foreach (var item in lines.Skip(1))
             {
                 TransactionRequest request = new TransactionRequest();
                 var split = item.Split(',');
-                request.Transactionid = split[0];
+                request.Transactionid = string.Format("{0}{1}", _transIdToAppend, split[0]);
                 request.CardNo = split[1];
                 request.IpAddress = split[2];
                 request.Latitude = split[3];
@@ -50,14 +51,14 @@ namespace FraudDetector.Win
             var maxDt = input.Max(d => d.TransactionDT);
             var timeDiff = (DateTime.Now - maxDt).TotalSeconds;
 
-            input.ForEach(f => f.TransactionDT = f.TransactionDT.AddSeconds(timeDiff));
-
-
-            //Process Each Record
-            foreach (var item in input)
+          
+            input.ForEach(f =>
             {
-                ProcessTransaction(item);
+                f.TransactionDT = f.TransactionDT.AddSeconds(timeDiff);
+                ProcessTransaction(f);
             }
+            );
+            
             MessageBox.Show("Upload Completed");
         }
 
