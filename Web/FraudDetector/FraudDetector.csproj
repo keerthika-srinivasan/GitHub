@@ -224,11 +224,11 @@
     <Content Include="Scripts\jquery-3.3.1.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\common2\common.csproj">
+    <ProjectReference Include="..\..\library\common\common.csproj">
       <Project>{326ee9ad-8ade-4663-9e6d-cbe123146118}</Project>
       <Name>common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\CoreEngine\CoreEngine.csproj">
+    <ProjectReference Include="..\..\library\CoreEngine\CoreEngine.csproj">
       <Project>{6f26b196-60a9-4441-9c9a-c56aaef98912}</Project>
       <Name>CoreEngine</Name>
     </ProjectReference>
