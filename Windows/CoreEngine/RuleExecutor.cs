@@ -18,9 +18,8 @@ namespace CoreEngine
             Type type1 = typeof(iRuleChecker);
             var lookupTypes = AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(s => s.GetTypes())
-                .Where(p => type1.IsAssignableFrom(p));
-            var currentAssembly = System.Reflection.Assembly.GetExecutingAssembly();
-
+                .Where(p => type1.IsAssignableFrom(p) && !p.IsInterface).ToList();
+            
 
             foreach (var item in lookupTypes)
             {
