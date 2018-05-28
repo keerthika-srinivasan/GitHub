@@ -80,8 +80,8 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\common\common.csproj">
-      <Project>{cd7e2949-61b5-4591-becd-4ccdff088e00}</Project>
+       <ProjectReference Include="..\common2\common.csproj">
+      <Project>{326ee9ad-8ade-4663-9e6d-cbe123146118}</Project>
       <Name>common</Name>
     </ProjectReference>
     <ProjectReference Include="..\CoreEngine\CoreEngine.csproj">
