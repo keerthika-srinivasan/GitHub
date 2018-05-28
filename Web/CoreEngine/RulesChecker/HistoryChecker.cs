@@ -1,4 +1,4 @@
-﻿using common.Model.RuleEngine;
+using common.Model.RuleEngine;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -96,22 +96,20 @@ namespace CoreEngine.RulesChecker
         /// <returns></returns>
         private decimal validateAvgMaxTransAmount(decimal transAmount, SearchTransactionOnFraudResponse data)
         {
-            int score = 0;
-
             if (data.AverageTransAmount != 0 && transAmount <= data.AverageTransAmount)
             {
-                score += 2;
+                return 0.02M;
             }
             else if (data.AverageTransAmount != 0 && transAmount > data.AverageTransAmount)
             {
-                score += 10;
+                return 1.0M;
             }
             else if (data.AverageTransAmount == 0 && data.MaxTransAmount == 0)
             {
-                score += 5;
+                return 0.5M;
             }
 
-            return score / 10;
+            return 0.1M;
         }
     }
 }
